@@ -1,1 +1,0 @@
-import{_ as t,c as o,b as r,F as s,a as c,o as n,r as a}from"./index-q-bRCVky.js";const _={},d=c("div",{class:"text-center"}," 訂單列表 ",-1);function i(l,m){const e=a("RouterView");return n(),o(s,null,[d,r(e)],64)}const p=t(_,[["render",i]]);export{p as default};

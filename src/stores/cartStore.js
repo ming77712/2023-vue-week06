@@ -15,6 +15,7 @@ const Toast = Swal.mixin({
 export default defineStore('cartStore', {
   state: () => ({
     carts: [],
+    cartCount: 0,
     loadingStatus: '',
   }),
   actions: {
@@ -23,6 +24,7 @@ export default defineStore('cartStore', {
         .get(`${VITE_URL}/api/${VITE_PATH}/cart`)
         .then((res) => {
           this.carts = res.data.data;
+          this.cartCount = this.carts.carts.length;
         })
         .catch((err) => {
           Toast.fire({
@@ -31,7 +33,7 @@ export default defineStore('cartStore', {
           });
         });
     },
-    addToCart(productId, modal, qty = 1) {
+    addToCart(productId, routerMethod, qty = 1) {
       const data = {
         product_id: productId,
         qty,
@@ -42,15 +44,15 @@ export default defineStore('cartStore', {
       axios
         .post(`${VITE_URL}/api/${VITE_PATH}/cart`, { data })
         .then((res) => {
+          if (routerMethod) {
+            routerMethod('/products');
+          }
           Toast.fire({
             icon: 'success',
             title: res.data.message,
           });
           this.loadingStatus = '';
           this.getCart();
-          if (modal) {
-            modal.hide();
-          }
         })
         .catch((err) => {
           Toast.fire({

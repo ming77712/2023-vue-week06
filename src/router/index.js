@@ -15,6 +15,11 @@ const routes = [
         component: () => import('../views/UserProducts.vue'),
       },
       {
+        path: 'products/:id',
+        name: 'ProductDetail',
+        component: () => import('../views/UserProduct.vue'),
+      },
+      {
         path: 'cart',
         name: 'Cart',
         component: () => import('../views/UserCart.vue'),
@@ -39,12 +44,22 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/NotFound.vue'),
+  },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   linkActiveClass: 'active',
   routes,
+  scrollBehavior() {
+    return {
+      top: 0,
+      behavior: 'smooth',
+    };
+  },
 });
 
 export default router;

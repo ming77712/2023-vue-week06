@@ -19,8 +19,15 @@ export default defineStore('productsStore', {
           console.log(err);
         });
     },
-    getCurrentProduct(product) {
-      this.currentProduct = product;
+    getProduct(productId) {
+      axios
+        .get(`${VITE_URL}/api/${VITE_PATH}/product/${productId}`)
+        .then((res) => {
+          this.currentProduct = res.data.product;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 });

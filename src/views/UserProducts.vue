@@ -2,34 +2,18 @@
 import { mapState, mapActions } from 'pinia';
 import productsStore from '../stores/productsStore';
 import cartStore from '../stores/cartStore';
-import ProductModal from '../components/ProductModal.vue';
 
 export default {
-  data() {
-    return {
-      modal: null,
-    };
-  },
   methods: {
-    ...mapActions(productsStore, ['getAllProduct', 'getCurrentProduct']),
+    ...mapActions(productsStore, ['getAllProduct']),
     ...mapActions(cartStore, ['addToCart']),
-    getProductModal(productModel) {
-      this.modal = productModel;
-    },
-    openModal(product) {
-      this.getCurrentProduct(product);
-      this.modal.show();
-    },
   },
   mounted() {
     this.getAllProduct();
   },
   computed: {
-    ...mapState(productsStore, ['products', 'currentProduct']),
+    ...mapState(productsStore, ['products']),
     ...mapState(cartStore, ['carts', 'loadingStatus']),
-  },
-  components: {
-    ProductModal,
   },
 };
 </script>
@@ -64,13 +48,11 @@ export default {
         </td>
         <td>
           <div class="btn-group btn-group-sm">
-            <button
+            <RouterLink
               type="button"
               class="btn btn-outline-secondary"
-              @click.prevent="openModal(product)"
-            >
-              查看更多
-            </button>
+              :to="`/products/${product.id}`"
+            >查看更多</RouterLink>
             <button
               type="button"
               class="btn btn-outline-danger"
@@ -89,5 +71,4 @@ export default {
       </tr>
     </tbody>
   </table>
-  <ProductModal @product-instance="getProductModal"></ProductModal>
 </template>

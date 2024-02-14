@@ -1,15 +1,7 @@
 <script>
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 const { VITE_URL } = import.meta.env;
-
-const sweetMessage = {
-  icon: '',
-  title: '',
-  showConfirmButton: false,
-  timer: 1500,
-};
 
 export default {
   data() {
@@ -29,22 +21,8 @@ export default {
         });
     },
     signout() {
-      // document.cookie = "hexToken=;expires=;";
-      this.setSweetMessageSuccess('已登出');
-      Swal.fire(sweetMessage);
-      setTimeout(() => {
-        this.$router.push('/login');
-      }, 1500);
-    },
-    setSweetMessageSuccess(res) {
-      this.sweetMessage.icon = 'success';
-      this.sweetMessage.title = res;
-      this.sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      this.sweetMessage.icon = 'error';
-      this.sweetMessage.title = err;
-      this.sweetMessage.timer = 2500;
+      document.cookie = 'hexToken=;expires=;';
+      this.$router.push('/');
     },
   },
   mounted() {

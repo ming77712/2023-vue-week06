@@ -45,6 +45,7 @@ export default {
           .then((res) => {
             this.setSweetMessageSuccess(res.data.message);
             this.$refs.form.resetForm();
+            this.form.message = '';
             this.getCart();
             Swal.fire(sweetMessage);
           })
@@ -69,7 +70,7 @@ export default {
     this.getCart();
   },
   computed: {
-    ...mapState(cartStore, ['carts']),
+    ...mapState(cartStore, ['carts', 'cartCount']),
   },
 };
 </script>
@@ -79,12 +80,20 @@ export default {
     <button
       class="btn btn-outline-danger"
       type="button"
+      :disabled="cartCount === 0"
       @click="removeCartAllItem()"
     >
       清空購物車
     </button>
   </div>
-  <table class="table align-middle">
+  <h2
+    class="text-center"
+    v-if="cartCount === 0"
+  >目前購物車是空的</h2>
+  <table
+    v-else
+    class="table align-middle"
+  >
     <thead>
       <tr>
         <th></th>

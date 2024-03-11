@@ -3,15 +3,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { mapState, mapActions } from 'pinia';
 import cartStore from '../stores/cartStore';
+import sweetMessageStore from '../stores/sweetMessageStore';
 
 const { VITE_URL, VITE_PATH } = import.meta.env;
-
-const sweetMessage = {
-  icon: '',
-  title: '',
-  showConfirmButton: false,
-  timer: 1500,
-};
 
 export default {
   data() {
@@ -34,10 +28,11 @@ export default {
       'removeCartAllItem',
       'removeCartItem',
     ]),
+    ...mapActions(sweetMessageStore, ['setSweetMessageSuccess', 'setSweetMessageError']),
     createOrder() {
       if (this.carts.carts.length === 0) {
         this.setSweetMessageError('購物車是空的 無法送出訂單');
-        Swal.fire(sweetMessage);
+        Swal.fire(this.sweetMessage);
       } else {
         const data = this.form;
         axios
@@ -47,23 +42,13 @@ export default {
             this.$refs.form.resetForm();
             this.form.message = '';
             this.getCart();
-            Swal.fire(sweetMessage);
+            Swal.fire(this.sweetMessage);
           })
           .catch((err) => {
             this.setSweetMessageError(err.response.data.message);
-            Swal.fire(sweetMessage);
+            Swal.fire(this.sweetMessage);
           });
       }
-    },
-    setSweetMessageSuccess(res) {
-      sweetMessage.icon = 'success';
-      sweetMessage.title = res;
-      sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      sweetMessage.icon = 'error';
-      sweetMessage.title = err;
-      sweetMessage.timer = 2500;
     },
   },
   mounted() {
@@ -71,6 +56,7 @@ export default {
   },
   computed: {
     ...mapState(cartStore, ['carts', 'cartCount']),
+    ...mapState(sweetMessageStore, ['sweetMessage']),
   },
 };
 </script>
@@ -288,6 +274,7 @@ export default {
         <button
           type="submit"
           class="btn btn-danger"
+          :disabled="cartCount === 0"
         >送出訂單</button>
       </div>
     </v-form>

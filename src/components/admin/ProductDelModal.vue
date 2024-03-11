@@ -2,6 +2,8 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { mapState, mapActions } from 'pinia';
+import sweetMessageStore from '../../stores/sweetMessageStore';
 
 const { VITE_URL, VITE_PATH } = import.meta.env;
 
@@ -10,15 +12,10 @@ export default {
   data() {
     return {
       delProductModal: null,
-      sweetMessage: {
-        icon: '',
-        title: '',
-        showConfirmButton: false,
-        timer: 1500,
-      },
     };
   },
   methods: {
+    ...mapActions(sweetMessageStore, ['setSweetMessageSuccess', 'setSweetMessageError']),
     delProduct() {
       axios
         .delete(
@@ -37,16 +34,6 @@ export default {
           Swal.fire(this.sweetMessage);
         });
     },
-    setSweetMessageSuccess(res) {
-      this.sweetMessage.icon = 'success';
-      this.sweetMessage.title = res;
-      this.sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      this.sweetMessage.icon = 'error';
-      this.sweetMessage.title = err;
-      this.sweetMessage.timer = 2500;
-    },
   },
   mounted() {
     this.delProductModal = new Modal(this.$refs.delProductModal, {
@@ -54,6 +41,9 @@ export default {
       backdrop: 'static',
     });
     this.$emit('productDeleteInstance', this.delProductModal);
+  },
+  computed: {
+    ...mapState(sweetMessageStore, ['sweetMessage']),
   },
 };
 </script>

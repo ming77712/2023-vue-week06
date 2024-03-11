@@ -3,50 +3,58 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 const routes = [
   {
     path: '/',
-    component: () => import('../views/UserLayout.vue'),
+    component: () => import('@/views/UserLayout.vue'),
     children: [
       {
         path: '',
-        component: () => import('../views/UserHome.vue'),
+        component: () => import('@/views/UserHome.vue'),
       },
       {
         path: 'products',
         name: 'Product',
-        component: () => import('../views/UserProducts.vue'),
+        component: () => import('@/views/UserProducts.vue'),
       },
       {
         path: 'products/:id',
         name: 'ProductDetail',
-        component: () => import('../views/UserProduct.vue'),
+        component: () => import('@/views/UserProduct.vue'),
       },
       {
         path: 'cart',
         name: 'Cart',
-        component: () => import('../views/UserCart.vue'),
+        component: () => import('@/views/UserCart.vue'),
       },
     ],
   },
   {
     path: '/login',
-    component: () => import('../views/AdminLogin.vue'),
+    component: () => import('@/views/AdminLogin.vue'),
   },
   {
     path: '/admin',
-    component: () => import('../views/admin/AdminDashboard.vue'),
+    component: () => import('@/views/admin/AdminDashboard.vue'),
     children: [
       {
         path: 'products',
-        component: () => import('../views/admin/AdminProducts.vue'),
+        component: () => import('@/views/admin/AdminProducts.vue'),
       },
       {
         path: 'orders',
-        component: () => import('../views/admin/AdminOrders.vue'),
+        component: () => import('@/views/admin/AdminOrders.vue'),
+      },
+      {
+        path: 'coupons',
+        component: () => import('@/views/admin/AdminCoupons.vue'),
+      },
+      {
+        path: 'article',
+        component: () => import('@/views/admin/AdminArticle.vue'),
       },
     ],
   },
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('../views/NotFound.vue'),
+    component: () => import('@/views/NotFound.vue'),
   },
 ];
 

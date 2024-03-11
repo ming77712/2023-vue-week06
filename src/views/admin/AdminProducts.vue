@@ -1,19 +1,14 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import ProductAdminModal from '../../components/productAdminModal.vue';
-import ProductDeleteModal from '../../components/productDeleteModal.vue';
-import Pagination from '../../components/paginationComponent.vue';
-import UploadImgModal from '../../components/uploadImgModal.vue';
+import { mapState, mapActions } from 'pinia';
+import sweetMessageStore from '../../stores/sweetMessageStore';
+import ProductAdminModal from '../../components/admin/ProductAdminModal.vue';
+import ProductDeleteModal from '../../components/admin/ProductDelModal.vue';
+import Pagination from '../../components/PaginationComponent.vue';
+import UploadImgModal from '../../components/admin/UploadImgModal.vue';
 
 const { VITE_URL, VITE_PATH } = import.meta.env;
-
-const sweetMessage = {
-  icon: '',
-  title: '',
-  showConfirmButton: false,
-  timer: 1500,
-};
 
 export default {
   data() {
@@ -26,11 +21,14 @@ export default {
       },
       products: [],
       pagination: {},
+      currentPage: 1,
       isNew: false,
     };
   },
   methods: {
+    ...mapActions(sweetMessageStore, ['setSweetMessageSuccess', 'setSweetMessageError']),
     getAllProduct(page = 1) {
+      this.currentPage = page;
       axios
         .get(
           `${VITE_URL}/api/${VITE_PATH}/admin/products?page=${page}`,
@@ -42,7 +40,7 @@ export default {
         })
         .catch((err) => {
           this.setSweetMessageError(err.data.message);
-          Swal.fire(sweetMessage);
+          Swal.fire(this.sweetMessage);
         });
     },
     getProductModal(productModel) {
@@ -55,7 +53,7 @@ export default {
       this.uploadImgModal = uploadImgModel;
     },
     refreshProducts() {
-      this.getAllProduct();
+      this.getAllProduct(this.currentPage);
     },
     openModal(modalName, item) {
       if (modalName === 'productModal') {
@@ -73,19 +71,12 @@ export default {
         this.uploadImgModal.show();
       }
     },
-    setSweetMessageSuccess(res) {
-      sweetMessage.icon = 'success';
-      sweetMessage.title = res;
-      sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      sweetMessage.icon = 'error';
-      sweetMessage.title = err;
-      sweetMessage.timer = 2500;
-    },
   },
   mounted() {
     this.getAllProduct();
+  },
+  computed: {
+    ...mapState(sweetMessageStore, ['sweetMessage']),
   },
   components: {
     ProductAdminModal,
@@ -97,30 +88,31 @@ export default {
 </script>
 
 <template>
-  <div class="container">
-    <div class="text-end mt-4">
-      <button
-        @click="openModal('uploadImgModal')"
-        class="btn btn-primary me-2"
-      >
-        上傳圖片
-      </button>
-      <button
-        @click="openModal('productModal')"
-        class="btn btn-primary"
-      >
-        建立新的產品
-      </button>
-    </div>
-    <table class="table mt-4">
+  <h3 class="mt-4">行程管理</h3>
+  <div class="text-end mt-4">
+    <button
+      @click="openModal('uploadImgModal')"
+      class="btn btn-primary me-2"
+    >
+      上傳圖片
+    </button>
+    <button
+      @click="openModal('productModal')"
+      class="btn btn-primary"
+    >
+      建立新的產品
+    </button>
+  </div>
+  <div class="bg-white mt-4 p-3">
+    <table class="table table-striped mb-0">
       <thead>
         <tr>
-          <th width="120">分類</th>
+          <th>分類</th>
           <th>產品名稱</th>
-          <th width="120">原價</th>
-          <th width="120">售價</th>
-          <th width="100">是否啟用</th>
-          <th width="120">編輯</th>
+          <th>原價</th>
+          <th>售價</th>
+          <th>是否啟用</th>
+          <th>編輯</th>
         </tr>
       </thead>
       <tbody>
@@ -158,11 +150,11 @@ export default {
         </tr>
       </tbody>
     </table>
-    <pagination
-      :pages="pagination"
-      @change-page="getAllProduct"
-    ></pagination>
   </div>
+  <pagination
+    :pages="pagination"
+    @change-page="getAllProduct"
+  ></pagination>
   <Product-Admin-Modal
     :current-product="currentProduct"
     :is-new="isNew"

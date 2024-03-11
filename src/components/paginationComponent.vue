@@ -10,7 +10,10 @@ export default {
 </script>
 
 <template>
-  <nav aria-label="Page navigation">
+  <nav
+    class="d-flex justify-content-center mt-4"
+    aria-label="Page navigation"
+  >
     <ul class="pagination">
       <li
         class="page-item"

@@ -1,15 +1,10 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { mapState, mapActions } from 'pinia';
+import sweetMessageStore from '../stores/sweetMessageStore';
 
 const { VITE_URL } = import.meta.env;
-
-const sweetMessage = {
-  icon: '',
-  title: '',
-  showConfirmButton: false,
-  timer: 1500,
-};
 
 export default {
   data() {
@@ -21,6 +16,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(sweetMessageStore, ['setSweetMessageSuccess', 'setSweetMessageError']),
     login() {
       axios
         .post(`${VITE_URL}/admin/signin`, this.user)
@@ -30,26 +26,19 @@ export default {
             expired,
           )};`;
           this.setSweetMessageSuccess(res.data.message);
-          Swal.fire(sweetMessage);
+          Swal.fire(this.sweetMessage);
           setTimeout(() => {
             this.$router.push('/admin/products');
           }, 1500);
         })
         .catch((err) => {
           this.setSweetMessageError(err.response.data.message);
-          Swal.fire(sweetMessage);
+          Swal.fire(this.sweetMessage);
         });
     },
-    setSweetMessageSuccess(res) {
-      sweetMessage.icon = 'success';
-      sweetMessage.title = res;
-      sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      sweetMessage.icon = 'error';
-      sweetMessage.title = err;
-      sweetMessage.timer = 2500;
-    },
+  },
+  computed: {
+    ...mapState(sweetMessageStore, ['sweetMessage']),
   },
 };
 </script>
@@ -57,7 +46,7 @@ export default {
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <h1 class="h3 my-3 font-weight-normal text-center">請先登入</h1>
+      <h1 class="h3 my-3 font-weight-normal text-center">後台管理登入</h1>
       <div class="col-8">
         <form
           id="form"

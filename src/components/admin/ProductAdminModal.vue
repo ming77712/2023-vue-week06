@@ -2,6 +2,8 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { mapState, mapActions } from 'pinia';
+import sweetMessageStore from '../../stores/sweetMessageStore';
 
 const { VITE_URL, VITE_PATH } = import.meta.env;
 
@@ -13,15 +15,11 @@ export default {
       tempProduct: {
         imagesUrl: [],
       },
-      sweetMessage: {
-        icon: '',
-        title: '',
-        showConfirmButton: false,
-        timer: 1500,
-      },
+      formData: null,
     };
   },
   methods: {
+    ...mapActions(sweetMessageStore, ['setSweetMessageSuccess', 'setSweetMessageError']),
     addProduct() {
       if (this.tempProduct.imagesUrl.length === 0) this.tempProduct.imagesUrl.push('');
       axios
@@ -63,15 +61,19 @@ export default {
           Swal.fire(this.sweetMessage);
         });
     },
-    setSweetMessageSuccess(res) {
-      this.sweetMessage.icon = 'success';
-      this.sweetMessage.title = res;
-      this.sweetMessage.timer = 1500;
-    },
-    setSweetMessageError(err) {
-      this.sweetMessage.icon = 'error';
-      this.sweetMessage.title = err;
-      this.sweetMessage.timer = 2500;
+    uploadImg(e) {
+      this.formData = new FormData();
+      this.formData.append('file-to-upload', e.target.files[0]);
+      if (typeof this.formData !== 'object') return;
+      axios
+        .post(`${VITE_URL}/api/${VITE_PATH}/admin/upload`, this.formData)
+        .then((res) => {
+          this.tempProduct.imageUrl = res.data.imageUrl;
+        })
+        .catch((err) => {
+          this.setSweetMessageError(err.message);
+          Swal.fire(this.sweetMessage);
+        });
     },
   },
   watch: {
@@ -86,6 +88,9 @@ export default {
     });
     this.$emit('productInstance', this.productModal);
     this.tempProduct = this.currentProduct;
+  },
+  computed: {
+    ...mapState(sweetMessageStore, ['sweetMessage']),
   },
 };
 </script>
@@ -130,6 +135,18 @@ export default {
                     class="form-control"
                     placeholder="請輸入圖片連結"
                     v-model="tempProduct.imageUrl"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label
+                    for="upload"
+                    class="form-label"
+                  >或 上傳圖片</label>
+                  <input
+                    id="upload"
+                    type="file"
+                    name="file-to-upload"
+                    @change="uploadImg"
                   />
                 </div>
                 <img

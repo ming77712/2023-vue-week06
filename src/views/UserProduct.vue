@@ -31,6 +31,17 @@ export default {
 </script>
 
 <template>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <RouterLink to="/products">產品列表</RouterLink>
+      </li>
+      <li
+        class="breadcrumb-item active"
+        aria-current="page"
+      >{{ this.currentProduct.title }}</li>
+    </ol>
+  </nav>
   <h2>
     <span>{{ this.currentProduct.title }}</span>
   </h2>
@@ -85,13 +96,6 @@ export default {
         >
           加入購物車
         </button>
-        <RouterLink
-          type="button"
-          class="btn btn-secondary"
-          to="/products"
-        >
-          返回
-        </RouterLink>
       </div>
     </div>
   </div>
@@ -119,5 +123,9 @@ img {
 
 .images {
   height: 200px;
+}
+
+li a {
+  text-decoration: none;
 }
 </style>

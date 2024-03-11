@@ -1,16 +1,9 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import sweetMessageStore from './sweetMessageStore';
 
 const { VITE_URL, VITE_PATH } = import.meta.env;
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 2000,
-  timerProgressBar: true,
-});
 
 export default defineStore('cartStore', {
   state: () => ({
@@ -20,6 +13,7 @@ export default defineStore('cartStore', {
   }),
   actions: {
     getCart() {
+      const { toastMessage } = sweetMessageStore();
       axios
         .get(`${VITE_URL}/api/${VITE_PATH}/cart`)
         .then((res) => {
@@ -27,13 +21,14 @@ export default defineStore('cartStore', {
           this.cartCount = this.carts.carts.length;
         })
         .catch((err) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'error',
             title: err.response.data.message,
           });
         });
     },
     addToCart(productId, routerMethod, qty = 1) {
+      const { toastMessage } = sweetMessageStore();
       const data = {
         product_id: productId,
         qty,
@@ -47,7 +42,7 @@ export default defineStore('cartStore', {
           if (routerMethod) {
             routerMethod('/products');
           }
-          Toast.fire({
+          toastMessage.fire({
             icon: 'success',
             title: res.data.message,
           });
@@ -55,13 +50,14 @@ export default defineStore('cartStore', {
           this.getCart();
         })
         .catch((err) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'error',
             title: err.response.data.message,
           });
         });
     },
     changeQty(cartId, productId, e) {
+      const { toastMessage } = sweetMessageStore();
       const data = {
         product_id: productId,
         qty: Number(e.target.value),
@@ -70,20 +66,21 @@ export default defineStore('cartStore', {
       axios
         .put(`${VITE_URL}/api/${VITE_PATH}/cart/${cartId}`, { data })
         .then((res) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'success',
             title: res.data.message,
           });
           this.getCart();
         })
         .catch((err) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'error',
             title: err.response.data.message,
           });
         });
     },
     removeCartAllItem() {
+      const { toastMessage } = sweetMessageStore();
       Swal.fire({
         title: '確定要清空購物車?',
         icon: 'warning',
@@ -97,14 +94,14 @@ export default defineStore('cartStore', {
           axios
             .delete(`${VITE_URL}/api/${VITE_PATH}/carts`)
             .then((res) => {
-              Toast.fire({
+              toastMessage.fire({
                 icon: 'success',
                 title: res.data.message,
               });
               this.getCart();
             })
             .catch((err) => {
-              Toast.fire({
+              toastMessage.fire({
                 icon: 'error',
                 title: err.response.data.message,
               });
@@ -113,17 +110,18 @@ export default defineStore('cartStore', {
       });
     },
     removeCartItem(productId) {
+      const { toastMessage } = sweetMessageStore();
       axios
         .delete(`${VITE_URL}/api/${VITE_PATH}/cart/${productId}`)
         .then((res) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'success',
             title: res.data.message,
           });
           this.getCart();
         })
         .catch((err) => {
-          Toast.fire({
+          toastMessage.fire({
             icon: 'error',
             title: err.response.data.message,
           });

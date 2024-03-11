@@ -1,1 +1,0 @@
-import{_ as t,c as o,b as n,w as s,F as a,a as c,r,o as _,d}from"./index-XStB5XxU.js";const l={},u=c("h2",{class:"fw-bold"}," 404 Not Found",-1);function f(i,m){const e=r("RouterLink");return _(),o(a,null,[u,n(e,{type:"button",class:"btn btn-secondary",to:"/"},{default:s(()=>[d(" 返回首頁 ")]),_:1})],64)}const b=t(l,[["render",f]]);export{b as default};
